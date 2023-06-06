@@ -2,6 +2,8 @@ package com.spyle23.topquiz23;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Button mQuestion3;
     private Button mQuestion4;
 
+    private int numberQuestion;
+
+    private int score;
+
     private final QuestionBank questionBank = generateQuestionBank();
 
     public void displayQuestion(final Question question) {
@@ -35,6 +41,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        this.numberQuestion = 3;
+        this.score = 0;
 
         this.mQuestionTitle = findViewById(R.id.game_activity_textview_question);
         this.mQuestion1 = findViewById(R.id.game_activity_button_1);
@@ -107,8 +116,28 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         if(index == this.questionBank.getCurrentQuestion().getAnswerIndex()){
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+            this.score++;
         }else {
             Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
+        }
+
+        this.numberQuestion--;
+
+        if(this.numberQuestion > 0){
+            displayQuestion(this.questionBank.getNextQuestion());
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Well done!")
+                    .setMessage("your score is "+ this.score)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .create()
+                    .show();
         }
     }
 
